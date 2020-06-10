@@ -9,6 +9,7 @@ package config
 import (
 	"encoding/json"
 	"fmt"
+	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
 	"net/url"
@@ -165,6 +166,21 @@ func InterfaceJson(n string, v interface{}) error {
 	}
 
 	err = json.Unmarshal(b, v)
+	if err != nil {
+		return fmt.Errorf("config: failed to unmarshal %s into %T: %w", n, v, err)
+	}
+
+	return nil
+}
+
+// InterfaceYaml calls yaml.Unmarshal() on Bytes(n)
+func InterfaceYaml(n string, v interface{}) error {
+	b, err := Bytes(n)
+	if err != nil {
+		return err
+	}
+
+	err = yaml.Unmarshal(b, v)
 	if err != nil {
 		return fmt.Errorf("config: failed to unmarshal %s into %T: %w", n, v, err)
 	}
