@@ -33,6 +33,7 @@ var DefaultPath string
 func init() {
 	if IsKubernetes() {
 		DefaultPath = "/etc/config"
+		return
 	}
 	DefaultPath = "config"
 }
