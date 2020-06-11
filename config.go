@@ -19,8 +19,23 @@ import (
 	"sync"
 )
 
-// DefaultPath is the fallback search path used if EnvVar is not specified.
+// IsKubernetes determines if we are running in a kubernetes cluster. It checks for the presence of
+// the KUBERNETES_SERVICE_HOST environment variable.
+func IsKubernetes() bool {
+	v, ok := os.LookupEnv("KUBERNETES_SERVICE_HOST")
+	return ok && v != ""
+}
+
+// DefaultPath is the fallback config path if CONFIG_PATH is not defined.
+// It is "/etc/config" if IsKubernetes().  Otherwise, it is "./config".
 var DefaultPath string
+
+func init() {
+	if IsKubernetes() {
+		DefaultPath = "/etc/config"
+	}
+	DefaultPath = "config"
+}
 
 // EnvVar is the name of the environment variable used to determine the config path.
 // If it is provided, it will override the DefaultPath value.
